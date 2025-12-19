@@ -17,3 +17,4 @@ __pycache__/
 # OS/editor files
 .DS_Store
 .vscode/
+aura-your-ai-executive-assistant-main/.env.backup
