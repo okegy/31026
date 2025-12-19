@@ -1,0 +1,19 @@
+# Environment files
+.env
+**/.env
+.env.local
+.env.*.local
+
+# Node artifacts
+node_modules/
+dist/
+build/
+
+# Python artifacts
+.venv/
+__pycache__/
+*.pyc
+
+# OS/editor files
+.DS_Store
+.vscode/

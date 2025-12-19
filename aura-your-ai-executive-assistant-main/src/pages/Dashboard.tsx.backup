@@ -1,0 +1,468 @@
+import React, { useState, useEffect } from 'react';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { AIProcessingFlow } from '@/components/AIProcessingFlow';
+import { VoiceInputSimple } from '@/components/VoiceInputSimple';
+import { AIAgent, AIProcessingStep } from '@/lib/aiAgent';
+import { useTasks } from '@/hooks/use-tasks';
+import { useEvents } from '@/hooks/use-events';
+import { useToast } from '@/hooks/use-toast';
+import { getStoredGoogleUser, initiateGoogleLogin, isGoogleAuthenticated } from '@/lib/googleAuth';
+import { 
+  Sparkles, 
+  Send, 
+  Zap, 
+  Calendar as CalendarIcon,
+  Mail,
+  CheckCircle,
+  Brain,
+  Loader2,
+  Bell,
+  X,
+  CheckSquare,
+  AlertTriangle,
+  TrendingUp,
+  Mic,
+  Plus,
+  ChevronRight,
+  Clock,
+  MapPin,
+  Users
+} from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNotifications } from '@/hooks/use-notifications';
+import { format, parseISO, isToday, isTomorrow, isPast, isThisWeek, isThisMonth } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+
+type TaskStatus = 'pending' | 'completed' | 'missed' | 'in_progress';
+
+interface Task {
+  id: string;
+  title: string;
+  task_name?: string;
+  status: TaskStatus;
+  priority: 'low' | 'medium' | 'high';
+  deadline: string | null;
+  created_at: string;
+  description?: string | null;
+  url?: string;
+}
+
+interface Event {
+  id: string;
+  title: string;
+  start_time: string;
+  end_time: string;
+  location?: string;
+  description?: string;
+  attendees?: string[];
+  status?: 'confirmed' | 'tentative' | 'cancelled';
+  url?: string;
+}
+
+const priorityColors = {
+  High: 'bg-red-100 text-red-800',
+  Medium: 'bg-yellow-100 text-yellow-800',
+  Low: 'bg-green-100 text-green-800',
+};
+
+const statusColors = {
+  pending: 'bg-yellow-100 text-yellow-800',
+  completed: 'bg-green-100 text-green-800',
+  missed: 'bg-red-100 text-red-800',
+  in_progress: 'bg-blue-100 text-blue-800',
+};
+
+export default function Dashboard() {
+  const [input, setInput] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingSteps, setProcessingSteps] = useState<AIProcessingStep[]>([]);
+  const [showResult, setShowResult] = useState(false);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const { tasks: hookTasks, isLoading: tasksLoading, createTask, updateTask, deleteTask, refetch: refetchTasks } = useTasks();
+  const { events: hookEvents, isLoading: eventsLoading, createEvent, updateEvent, deleteEvent, refetch: refetchEvents } = useEvents();
+  const { toast } = useToast();
+  
+  const googleUser = getStoredGoogleUser();
+  const isGoogleAuth = isGoogleAuthenticated();
+  const { isDemoMode } = useAuth();
+  const { hasPermission, requestPermission } = useNotifications();
+  const [showNotificationBanner, setShowNotificationBanner] = useState(true);
+  
+  // Load data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        if (isDemoMode) {
+          // Load demo data
+          const demoData = await import('@/lib/demoData');
+          const mappedTasks = demoData.demoTasks.map(t => ({
+            ...t,
+            title: t.title,
+            task_name: t.title,
+            priority: t.priority as 'low' | 'medium' | 'high',
+          }));
+          setTasks(mappedTasks);
+          setEvents(demoData.demoEvents as any);
+        } else {
+          // Use hook data
+          const mappedTasks = hookTasks.map(t => ({
+            ...t,
+            title: t.title,
+            task_name: t.title,
+            priority: t.priority as 'low' | 'medium' | 'high',
+          }));
+          setTasks(mappedTasks);
+          setEvents(hookEvents as any);
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+        toast({
+          title: "Error loading data",
+          description: "Failed to load tasks and events. Please try again later.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadData();
+  }, [isDemoMode, hookTasks, hookEvents, toast]);
+  
+  // Calculate stats
+  const stats = React.useMemo(() => ({
+    tasks: {
+      total: tasks.length,
+      completed: tasks.filter(t => t.status === 'completed').length,
+      pending: tasks.filter(t => t.status === 'pending').length,
+      overdue: tasks.filter(t => t.status === 'missed').length,
+    },
+    events: {
+      today: events.filter(e => isToday(parseISO(e.start_time))).length,
+      upcoming: events.filter(e => !isPast(parseISO(e.start_time))).length,
+    },
+    productivity: {
+      completionRate: tasks.length > 0 
+        ? Math.round((tasks.filter(t => t.status === 'completed').length / tasks.length) * 100) 
+        : 0,
+    },
+  }), [tasks, events]);
+  
+  // Get data for display
+  const todayTasks = React.useMemo(() => 
+    tasks
+      .filter(t => t.status !== 'completed' && (isToday(parseISO(t.deadline || '')) || !t.deadline))
+      .sort((a, b) => {
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      })
+      .slice(0, 3),
+    [tasks]
+  );
+  
+  const overdueTasks = React.useMemo(() => 
+    tasks.filter(t => t.status === 'missed' || 
+      (t.deadline && isPast(parseISO(t.deadline)) && t.status !== 'completed'))
+      .slice(0, 5),
+    [tasks]
+  );
+  
+  const upcomingEvents = React.useMemo(() => 
+    events
+      .filter(e => !isPast(parseISO(e.end_time)))
+      .sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime())
+      .slice(0, 3),
+    [events]
+  );
+
+  const handleAIProcess = async () => {
+    if (!input.trim()) {
+      toast({
+        title: "Empty input",
+        description: "Please tell AURA what you need",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    setShowResult(false);
+    setProcessingSteps([]);
+
+    const agent = new AIAgent((steps) => {
+      setProcessingSteps([...steps]);
+    });
+
+    try {
+      // Process the user input
+      const result = await agent.processUserInput(
+        input,
+        googleUser?.email || 'demo@example.com',
+        async (taskData) => {
+          const { data: newTask, error } = await createTask({
+            ...taskData,
+            status: 'pending',
+            created_at: new Date().toISOString(),
+          });
+          
+          if (newTask) {
+            setTasks(prev => [newTask, ...prev]);
+            return { success: true, id: newTask.id };
+          } else {
+            throw new Error(error?.message || 'Failed to create task');
+          }
+        },
+        async (eventData) => {
+          const { data: newEvent, error } = await createEvent({
+            ...eventData,
+            status: 'confirmed',
+          });
+          
+          if (newEvent) {
+            setEvents(prev => [newEvent, ...prev]);
+            return { success: true, id: newEvent.id };
+          } else {
+            throw new Error(error?.message || 'Failed to create event');
+          }
+        }
+      );
+
+      setShowResult(true);
+
+      if (result.success) {
+        toast({
+          title: "✓ Task Automated Successfully!",
+          description: result.emailSent 
+            ? "Task created, calendar updated, and confirmation email sent"
+            : result.eventCreated
+            ? "Task and event created successfully"
+            : "Task created successfully",
+        });
+        
+        // Refresh data
+        if (!isDemoMode) {
+          await Promise.all([
+            refetchTasks(),
+            refetchEvents()
+          ]);
+        }
+        
+        setInput('');
+      } else {
+        toast({
+          title: "Processing completed with warnings",
+          description: result.error || "Some steps may have failed",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "AI Processing Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey && !isProcessing) {
+      e.preventDefault();
+      handleAIProcess();
+    }
+  };
+
+  // Handle task status toggle
+  const handleToggleTaskStatus = async (taskId: string, currentStatus: TaskStatus) => {
+    try {
+      const newStatus: TaskStatus = currentStatus === 'completed' ? 'pending' : 'completed';
+      
+      if (!isDemoMode) {
+        const { data: updatedTask, error } = await updateTask(taskId, { 
+          status: newStatus 
+        });
+        
+        if (error) throw error;
+        
+        setTasks(tasks.map(task => 
+          task.id === taskId ? { ...task, status: newStatus } : task
+        ));
+      } else {
+        // Demo mode - update local state only
+        setTasks(tasks.map(task => 
+          task.id === taskId ? { ...task, status: newStatus } : task
+        ));
+      }
+      
+      toast({
+        title: `Task marked as ${newStatus}`,
+        description: `Task has been ${newStatus === 'completed' ? 'completed' : 'marked as pending'}`,
+      });
+    } catch (error) {
+      console.error('Error updating task status:', error);
+      toast({
+        title: "Error updating task",
+        description: "Failed to update task status. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  // Format date for display
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'No deadline';
+    
+    try {
+      const date = parseISO(dateString);
+      if (isToday(date)) return 'Today';
+      if (isTomorrow(date)) return 'Tomorrow';
+      
+      return format(date, 'MMM d, yyyy');
+    } catch (error) {
+      return 'Invalid date';
+    }
+  };
+
+  // Handle voice input
+  const handleVoiceInput = (text: string) => {
+    setInput(text);
+    // Auto-submit if the input is a command
+    if (text.trim().length > 10) {
+      setTimeout(() => handleAIProcess(), 500);
+    }
+  };
+
+  const handleEnableNotifications = async () => {
+    const granted = await requestPermission();
+    if (granted) {
+      setShowNotificationBanner(false);
+    }
+  };
+
+  return (
+    <DashboardLayout 
+      title="AURA Dashboard" 
+      subtitle="Your Autonomous AI Assistant"
+    >
+      <div className="space-y-6 animate-fade-in">
+        {/* Notification Permission Banner */}
+        {!hasPermission && showNotificationBanner && (
+          <Card className="bg-primary/5 border-primary/20">
+            <CardContent className="flex items-center justify-between py-4">
+              <div className="flex items-center gap-3">
+                <Bell className="w-5 h-5 text-primary" />
+                <div>
+                  <p className="font-medium">Enable Task Reminders</p>
+                  <p className="text-sm text-muted-foreground">
+                    Get notified about upcoming deadlines and important tasks
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button onClick={handleEnableNotifications} size="sm">
+                  Enable Notifications
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => setShowNotificationBanner(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Google Auth Status */}
+        {!isGoogleAuth && (
+          <Card className="bg-gradient-to-r from-blue-900/20 to-purple-900/20 border-blue-500/30">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-purple-500/20 border-purple-500/50 text-gray-300"
+                  onClick={() => setInput("Remind me to submit my assignment tomorrow at 6 pm")}
+                >
+                  Try: Assignment reminder
+                </Badge>
+                <Badge 
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-purple-500/20 border-purple-500/50 text-gray-300"
+                  onClick={() => setInput("Schedule a meeting with John next Monday at 2pm")}
+                >
+                  Try: Schedule meeting
+                </Badge>
+                <Badge 
+                  variant="outline" 
+                  className="cursor-pointer hover:bg-purple-500/20 border-purple-500/50 text-gray-300"
+                  onClick={() => setInput("Call Sarah tomorrow at 10am - URGENT")}
+                >
+                  Try: Urgent call
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Processing Flow */}
+        {processingSteps.length > 0 && (
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Brain className="w-5 h-5 text-purple-400" />
+              <h3 className="text-lg font-semibold text-white">AI Processing Flow</h3>
+            </div>
+            <AIProcessingFlow steps={processingSteps} />
+          </div>
+        )}
+
+        {/* Result Summary */}
+        {showResult && processingSteps.length > 0 && (
+          <Card className="bg-gradient-to-br from-green-900/20 to-emerald-900/20 border-green-500/30">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <CheckCircle className="w-8 h-8 text-green-400 flex-shrink-0" />
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    ✓ Task Automated Successfully
+                  </h3>
+                  <div className="space-y-2 text-gray-300">
+                    <p className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      Intent understood and analyzed
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      Task created and prioritized
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      Calendar event scheduled
+                    </p>
+                    <p className="flex items-center gap-2">
+                      <CheckCircle className="w-4 h-4 text-green-400" />
+                      {isGoogleAuth ? 'Email confirmation sent' : 'Reminders configured'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+      </div>
+    </DashboardLayout>
+  );
+}

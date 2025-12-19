@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AURA Voice Input Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .status {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+        }
+        .status.supported {
+            background: rgba(34, 197, 94, 0.3);
+            border: 2px solid #22c55e;
+        }
+        .status.not-supported {
+            background: rgba(239, 68, 68, 0.3);
+            border: 2px solid #ef4444;
+        }
+        .status.listening {
+            background: rgba(59, 130, 246, 0.3);
+            border: 2px solid #3b82f6;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        button {
+            width: 100%;
+            padding: 20px;
+            font-size: 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transition: transform 0.2s;
+            margin: 10px 0;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .transcript {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            min-height: 100px;
+            margin: 20px 0;
+            font-size: 18px;
+            word-wrap: break-word;
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 10px 0;
+        }
+        .icon {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎤 AURA Voice Input Test</h1>
+        
+        <div id="support-status" class="status">
+            Checking browser support...
+        </div>
+
+        <div class="instructions">
+            <h3>📋 Instructions:</h3>
+            <ol>
+                <li>Click the "Start Voice Input" button below</li>
+                <li>Allow microphone access when prompted</li>
+                <li>Speak clearly: "Remind me to buy groceries tomorrow"</li>
+                <li>Your speech will appear in the box below</li>
+            </ol>
+        </div>
+
+        <button id="voice-btn" onclick="toggleVoice()">
+            🎤 Start Voice Input
+        </button>
+
+        <div class="transcript">
+            <strong>Transcript:</strong>
+            <div id="transcript">No speech detected yet...</div>
+        </div>
+
+        <div id="status-message" class="status" style="display: none;">
+            Ready to listen
+        </div>
+    </div>
+
+    <script>
+        let recognition = null;
+        let isListening = false;
+
+        // Check browser support
+        window.onload = function() {
+            const supportStatus = document.getElementById('support-status');
+            const voiceBtn = document.getElementById('voice-btn');
+
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                supportStatus.className = 'status supported';
+                supportStatus.innerHTML = '✅ Voice input is SUPPORTED in your browser!<br>You can use AURA voice commands.';
+                
+                // Initialize speech recognition
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+
+                recognition.onstart = function() {
+                    isListening = true;
+                    voiceBtn.innerHTML = '⏹️ Stop Listening';
+                    voiceBtn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                    document.getElementById('status-message').style.display = 'block';
+                    document.getElementById('status-message').className = 'status listening';
+                    document.getElementById('status-message').innerHTML = '🎤 Listening... Speak now!';
+                };
+
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById('transcript').innerHTML = transcript;
+                    document.getElementById('status-message').className = 'status supported';
+                    document.getElementById('status-message').innerHTML = '✅ Speech captured successfully!';
+                };
+
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    document.getElementById('status-message').className = 'status not-supported';
+                    
+                    if (event.error === 'no-speech') {
+                        document.getElementById('status-message').innerHTML = '❌ No speech detected. Please try again.';
+                    } else if (event.error === 'not-allowed') {
+                        document.getElementById('status-message').innerHTML = '❌ Microphone access denied. Please allow microphone access.';
+                    } else {
+                        document.getElementById('status-message').innerHTML = '❌ Error: ' + event.error;
+                    }
+                };
+
+                recognition.onend = function() {
+                    isListening = false;
+                    voiceBtn.innerHTML = '🎤 Start Voice Input';
+                    voiceBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                };
+
+            } else {
+                supportStatus.className = 'status not-supported';
+                supportStatus.innerHTML = '❌ Voice input is NOT supported in your browser.<br>Please use Chrome, Edge, or Safari.';
+                voiceBtn.disabled = true;
+                voiceBtn.innerHTML = '❌ Not Supported';
+            }
+        };
+
+        function toggleVoice() {
+            if (!recognition) return;
+
+            if (isListening) {
+                recognition.stop();
+            } else {
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Error starting recognition:', error);
+                    document.getElementById('status-message').style.display = 'block';
+                    document.getElementById('status-message').className = 'status not-supported';
+                    document.getElementById('status-message').innerHTML = '❌ Error starting voice input. Please try again.';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

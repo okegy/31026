@@ -1,0 +1,121 @@
+================================================================================
+                  AURA AI EXECUTIVE ASSISTANT
+                     HOW TO RUN - QUICK GUIDE
+================================================================================
+
+EASIEST METHOD - ONE-CLICK INSTALL:
+-----------------------------------
+1. Double-click: INSTALL.bat
+2. Wait for installation to complete
+3. Application will start automatically!
+
+If Node.js is not installed, the installer will guide you.
+
+================================================================================
+
+ALTERNATIVE METHODS:
+-------------------
+
+Method 1: Quick Start (if Node.js is already installed)
+--------------------------------------------------------
+Double-click: QUICKSTART.bat
+
+Method 2: PowerShell Automated Setup
+-------------------------------------
+1. Right-click PowerShell → "Run as Administrator"
+2. Navigate to this folder
+3. Run: .\SETUP.ps1
+4. After setup, run: .\START.ps1
+
+Method 3: Manual Command Line
+------------------------------
+1. Open Command Prompt or PowerShell
+2. Navigate to this folder
+3. Run: npm install (first time only)
+4. Run: npm run dev
+
+================================================================================
+
+ACCESSING THE APPLICATION:
+--------------------------
+Once started, open your browser and go to:
+
+    http://localhost:5173
+
+The application will also automatically open in your default browser.
+
+================================================================================
+
+STOPPING THE APPLICATION:
+-------------------------
+Press: Ctrl + C in the terminal/command window
+
+================================================================================
+
+TROUBLESHOOTING:
+---------------
+
+Problem: "Node.js is not installed"
+Solution: Install Node.js from https://nodejs.org/ (download LTS version)
+
+Problem: "Port already in use"
+Solution: The app will automatically use the next available port (5174, etc.)
+
+Problem: Dependencies installation fails
+Solution: Run these commands:
+  npm cache clean --force
+  npm install
+
+Problem: Application won't start
+Solution: 
+  1. Ensure Node.js is installed: node --version
+  2. Reinstall dependencies: npm install
+  3. Check for error messages in the terminal
+
+================================================================================
+
+NEED MORE HELP?
+--------------
+Read these files for detailed information:
+
+  README_SETUP.md      - Complete setup guide
+  SETUP_MANUAL.md      - Detailed manual installation
+  BACKEND_INFO.md      - Backend architecture information
+
+================================================================================
+
+QUICK REFERENCE:
+---------------
+Install & Run:     INSTALL.bat
+Quick Start:       QUICKSTART.bat
+Automated Setup:   .\SETUP.ps1 (PowerShell as Admin)
+Start App:         .\START.ps1 or npm run dev
+Stop App:          Ctrl + C
+Application URL:   http://localhost:5173
+
+================================================================================
+
+FEATURES:
+---------
+✓ Dashboard - Overview of all activities
+✓ Tasks - Manage your to-do list
+✓ Calendar - Schedule and events
+✓ Emails - Email management
+✓ Activity - Track your productivity
+
+Backend: Fully configured Supabase (no setup needed)
+
+================================================================================
+
+SYSTEM REQUIREMENTS:
+-------------------
+- Windows 10/11
+- Node.js (LTS version recommended)
+- Internet connection (for backend)
+- Modern web browser (Chrome, Firefox, Edge, etc.)
+
+================================================================================
+
+                        ENJOY YOUR AI ASSISTANT!
+
+================================================================================
