@@ -11,13 +11,13 @@ import { Sparkles, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { z } from 'zod';
 
 const authSchema = z.object({
-  email: z.string().email('Please enter a valid email address'),
+  email: z.string().min(3, 'Please enter a valid email or username'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
 
 export default function Auth() {
   const navigate = useNavigate();
-  const { user, signIn, signUp, setDemoMode, isDemoMode } = useAuth();
+  const { user, signIn, signUp, setDemoMode, isDemoMode, userRole } = useAuth();
   const { toast } = useToast();
   
   const [isLoading, setIsLoading] = useState(false);
@@ -31,9 +31,13 @@ export default function Auth() {
 
   useEffect(() => {
     if (user || isDemoMode) {
-      navigate('/dashboard');
+      if (userRole === 'patient') {
+        navigate('/patient-dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     }
-  }, [user, isDemoMode, navigate]);
+  }, [user, isDemoMode, userRole, navigate]);
 
   const validateForm = () => {
     try {
@@ -55,6 +59,26 @@ export default function Auth() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Demo Interception
+    if (formData.email === 'doctor_demo' && formData.password === 'medicu123') {
+      setDemoMode(true, 'doctor');
+      toast({
+        title: 'Welcome Doctor! 👨‍⚕️',
+        description: 'Logging into Doctor Dashboard...',
+      });
+      return;
+    }
+    
+    if (formData.email === 'patient_demo' && formData.password === 'medicu123') {
+      setDemoMode(true, 'patient');
+      toast({
+        title: 'Welcome Patient! 👋',
+        description: 'Logging into Patient Dashboard...',
+      });
+      return;
+    }
+
     if (!validateForm()) return;
     
     setIsLoading(true);
@@ -141,8 +165,8 @@ export default function Auth() {
                   <Label htmlFor="signin-email">Email</Label>
                   <Input
                     id="signin-email"
-                    type="email"
-                    placeholder="you@example.com"
+                    type="text"
+                    placeholder="doctor_demo or you@example.com"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     className={errors.email ? 'border-destructive' : ''}

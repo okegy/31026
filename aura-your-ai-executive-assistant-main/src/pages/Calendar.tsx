@@ -9,8 +9,24 @@ import { useEvents, Event } from '@/hooks/use-events';
 import { parseEventFromInput } from '@/lib/eventParser';
 import { useToast } from '@/hooks/use-toast';
 import { format, startOfWeek, addDays, isSameDay, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from 'date-fns';
-import { Sparkles, Calendar as CalendarIcon, Clock, MapPin, Users, Loader2, Stethoscope, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, Calendar as CalendarIcon, Clock, MapPin, Users, Loader2, Stethoscope, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+
+const MOCK_DOCTORS = [
+  { name: 'Dr. Sarah', spec: 'Cardiology' },
+  { name: 'Dr. Michael', spec: 'Dermatology' },
+  { name: 'Dr. John', spec: 'Neurology' },
+  { name: 'Dr. Emily', spec: 'General' },
+  { name: 'Dr. Robert', spec: 'Pediatrics' },
+  { name: 'Dr. Emma', spec: 'Orthopedics' },
+];
+
+const QUICK_ACTIONS = [
+  "Book Dr. Emma for Orthopedics review with Alice next Wednesday",
+  "Schedule Dr. John for Neurology consult tomorrow at 10am",
+  "Add Pediatrics vaccine for Leo with Dr. Robert on Friday 2pm",
+  "Book Cardiology checkup with Dr. Sarah today at 4pm"
+];
 
 export default function CalendarPage() {
   const [input, setInput] = useState('');
@@ -117,6 +133,36 @@ export default function CalendarPage() {
                 Book
               </Button>
             </div>
+            
+            <div className="mt-4 pt-4 border-t border-slate-100">
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="w-4 h-4 text-slate-400" />
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Available Specialists & Doctors</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-4">
+                 {MOCK_DOCTORS.map(doc => (
+                   <Badge key={doc.name} variant="outline" className="bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 cursor-pointer" onClick={() => setInput(prev => prev + ` ${doc.name}`)}>
+                     {doc.name} <span className="text-slate-400 ml-1 text-[10px]">({doc.spec})</span>
+                   </Badge>
+                 ))}
+              </div>
+
+              <div className="flex items-center gap-2 mb-2">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">AI Quick Prompts</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                 {QUICK_ACTIONS.map((action, i) => (
+                    <button 
+                      key={i} 
+                      onClick={() => setInput(action)}
+                      className="text-xs px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-full transition-colors border border-blue-100"
+                    >
+                      {action}
+                    </button>
+                 ))}
+              </div>
+            </div>
           </CardContent>
         </Card>
 
@@ -187,10 +233,13 @@ export default function CalendarPage() {
                         key={event.id}
                         className={`text-xs p-1.5 rounded border-l-2 truncate cursor-pointer transition-colors ${i % 2 === 0 ? 'bg-blue-50 border-blue-500 text-blue-800 hover:bg-blue-100' : 'bg-green-50 border-green-500 text-green-800 hover:bg-green-100'}`}
                       >
-                        <div className="font-semibold truncate">{event.title}</div>
-                        <div className="text-[10px] opacity-80 flex items-center justify-between">
+                        <div className="font-semibold truncate" title={event.title}>{event.title}</div>
+                        <div className="text-[10px] opacity-80 flex items-center justify-between mt-1">
                           <span>{format(new Date(event.start_time), 'h:mm a')}</span>
-                          <span className="flex items-center"><Stethoscope className="w-2.5 h-2.5 mr-0.5"/> Dr.</span>
+                          <span className="flex items-center" title={event.title}>
+                             <Stethoscope className="w-2.5 h-2.5 mr-0.5"/> 
+                             {event.title.includes('Dr.') ? '' : 'Clinic'}
+                          </span>
                         </div>
                       </div>
                     ))}

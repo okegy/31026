@@ -1,0 +1,31 @@
+export const mockWaitlist = [
+  { id: 'w1', name: 'John Doe', phone: '+1234567890', distance_km: 5, urgency: 8, wait_since: 14, speciality_needed: 'Cardiology', past_cancellations: 0, is_vip: false },
+  { id: 'w2', name: 'Alice Smith', phone: '+1234567891', distance_km: 15, urgency: 5, wait_since: 7, speciality_needed: 'Neurology', past_cancellations: 1, is_vip: false },
+  { id: 'w3', name: 'Bob Johnson', phone: '+1234567892', distance_km: 2, urgency: 3, wait_since: 30, speciality_needed: 'General', past_cancellations: 0, is_vip: false },
+  { id: 'w4', name: 'Charlie Brown', phone: '+1234567893', distance_km: 10, urgency: 9, wait_since: 2, speciality_needed: 'Cardiology', past_cancellations: 2, is_vip: true },
+  { id: 'w5', name: 'Diana Prince', phone: '+1234567894', distance_km: 20, urgency: 4, wait_since: 21, speciality_needed: 'Orthopedics', past_cancellations: 0, is_vip: false },
+  { id: 'w6', name: 'Evan Wright', phone: '+1234567895', distance_km: 8, urgency: 7, wait_since: 10, speciality_needed: 'Cardiology', past_cancellations: 0, is_vip: false },
+  { id: 'w7', name: 'Fiona Gallagher', phone: '+1234567896', distance_km: 3, urgency: 6, wait_since: 5, speciality_needed: 'Neurology', past_cancellations: 0, is_vip: true },
+  { id: 'w8', name: 'George Miller', phone: '+1234567897', distance_km: 12, urgency: 2, wait_since: 40, speciality_needed: 'General', past_cancellations: 1, is_vip: false },
+  { id: 'w9', name: 'Hannah Lee', phone: '+1234567898', distance_km: 4, urgency: 8, wait_since: 8, speciality_needed: 'Dermatology', past_cancellations: 0, is_vip: false },
+  { id: 'w10', name: 'Ian Harding', phone: '+1234567899', distance_km: 30, urgency: 9, wait_since: 1, speciality_needed: 'Pediatrics', past_cancellations: 0, is_vip: true },
+  { id: 'w11', name: 'Jack Daniels', phone: '+1234567800', distance_km: 7, urgency: 5, wait_since: 12, speciality_needed: 'Cardiology', past_cancellations: 3, is_vip: false },
+  { id: 'w12', name: 'Karen Smith', phone: '+1234567801', distance_km: 14, urgency: 4, wait_since: 15, speciality_needed: 'Dermatology', past_cancellations: 0, is_vip: false },
+  { id: 'w13', name: 'Leo Messi', phone: '+1234567802', distance_km: 1, urgency: 10, wait_since: 5, speciality_needed: 'Orthopedics', past_cancellations: 0, is_vip: true },
+  { id: 'w14', name: 'Mia Wong', phone: '+1234567803', distance_km: 9, urgency: 3, wait_since: 25, speciality_needed: 'Pediatrics', past_cancellations: 0, is_vip: false },
+];
+
+export const mockCalendarEvents = [
+  { id: 'e1', title: 'Consultation with Patient A', start: '2026-03-10T09:00:00Z', end: '2026-03-10T10:00:00Z', status: 'confirmed', doctor: 'Dr. Sarah' },
+  { id: 'e2', title: 'Procedure X for Patient B', start: '2026-03-10T10:00:00Z', end: '2026-03-10T11:00:00Z', status: 'cancelled', doctor: 'Dr. John' },
+  { id: 'e3', title: 'Routine Checkup for Patient C', start: '2026-03-10T11:00:00Z', end: '2026-03-10T11:30:00Z', status: 'confirmed', doctor: 'Dr. Emily' },
+  { id: 'e4', title: 'Follow-up with Patient D', start: '2026-03-10T13:00:00Z', end: '2026-03-10T13:45:00Z', status: 'confirmed', doctor: 'Dr. Sarah' },
+  { id: 'e5', title: 'Consultation with Patient E', start: '2026-03-10T14:00:00Z', end: '2026-03-10T15:00:00Z', status: 'confirmed', doctor: 'Dr. John' },
+  { id: 'e6', title: 'Therapy Session for Patient F', start: '2026-03-10T15:00:00Z', end: '2026-03-10T16:00:00Z', status: 'cancelled', doctor: 'Dr. Emily' },
+  { id: 'e7', title: 'Review Results for Patient G', start: '2026-03-11T09:00:00Z', end: '2026-03-11T09:30:00Z', status: 'confirmed', doctor: 'Dr. Sarah' },
+  { id: 'e8', title: 'Initial Consultation Patient H', start: '2026-03-11T10:00:00Z', end: '2026-03-11T11:00:00Z', status: 'cancelled', doctor: 'Dr. John' },
+  { id: 'e9', title: 'Checkup for Patient I', start: '2026-03-11T11:30:00Z', end: '2026-03-11T12:00:00Z', status: 'confirmed', doctor: 'Dr. Emily' },
+  { id: 'e10', title: 'Consultation with Patient J', start: '2026-03-11T13:00:00Z', end: '2026-03-11T14:00:00Z', status: 'confirmed', doctor: 'Dr. Sarah' },
+  { id: 'e11', title: 'Dermatology Review Patient K', start: '2026-03-11T14:00:00Z', end: '2026-03-11T14:30:00Z', status: 'cancelled', doctor: 'Dr. Michael' },
+  { id: 'e12', title: 'Pediatric Vaccine Patient L', start: '2026-03-11T15:00:00Z', end: '2026-03-11T15:45:00Z', status: 'confirmed', doctor: 'Dr. Robert' },
+];

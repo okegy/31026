@@ -10,7 +10,8 @@ import {
   Activity as ActivityLogIcon,
   LogOut,
   Sparkles,
-  BarChart3
+  BarChart3,
+  Network
 } from 'lucide-react';
 import {
   Sidebar,
@@ -28,20 +29,30 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 
-const mainNavItems = [
-  { title: 'Dashboard', icon: Activity, path: '/dashboard' },
+const doctorNavItems = [
+  { title: 'Doctor Dashboard', icon: ActivityLogIcon, path: '/dashboard' },
   { title: 'Appointments', icon: CalendarCheck, path: '/tasks' },
-  { title: 'Patients', icon: Heart, path: '/patients' },
-  { title: 'Doctors', icon: Stethoscope, path: '/doctors' },
+  { title: 'Patient Records', icon: Heart, path: '/patients' },
+  { title: 'Doctors Network', icon: Stethoscope, path: '/doctors' },
   { title: 'Calendar', icon: Calendar, path: '/calendar' },
-  { title: 'Analytics', icon: BarChart3, path: '/analytics' },
-  { title: 'Messages', icon: MessageSquare, path: '/emails' },
+  { title: 'Waitlist Agent', icon: Network, path: '/waitlist' },
+  { title: 'Statistical Reports', icon: BarChart3, path: '/doctor-analytics' },
+  { title: 'Messages & Alerts', icon: MessageSquare, path: '/emails' },
   { title: 'Activity Log', icon: ActivityLogIcon, path: '/activity' },
+];
+
+const patientNavItems = [
+  { title: 'Patient Dashboard', icon: Heart, path: '/patient-dashboard' },
+  { title: 'Book Appointment', icon: CalendarCheck, path: '/tasks' },
+  { title: 'My Appointments', icon: Calendar, path: '/calendar' },
+  { title: 'Notifications', icon: MessageSquare, path: '/emails' },
 ];
 
 export function AppSidebar() {
   const location = useLocation();
-  const { signOut, isDemoMode, user } = useAuth();
+  const { signOut, isDemoMode, user, userRole } = useAuth();
+  
+  const navItems = userRole === 'patient' ? patientNavItems : doctorNavItems;
 
   return (
     <Sidebar className="border-r border-slate-200 bg-slate-50">
@@ -52,7 +63,7 @@ export function AppSidebar() {
           </div>
           <div>
             <h1 className="font-display font-bold text-xl text-blue-900 tracking-tight">MEDICU</h1>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-widest">Clinic Assistant</p>
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-widest">{userRole === 'patient' ? 'Patient Portal' : 'Clinic Assistant'}</p>
           </div>
         </div>
       </SidebarHeader>
@@ -64,7 +75,7 @@ export function AppSidebar() {
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {mainNavItems.map((item) => {
+              {navItems.map((item) => {
                 // Determine active state - basic matching or specific map
                 const isActive = location.pathname === item.path || (location.pathname === '/' && item.path === '/dashboard');
                 return (
@@ -95,13 +106,13 @@ export function AppSidebar() {
 
       <SidebarFooter className="p-4 border-t border-slate-200">
         <div className="space-y-3">
-          {user && (
+          {(user || isDemoMode) && (
             <div className="px-3 py-2 rounded-lg bg-white border border-slate-100 shadow-sm">
               <p className="text-sm font-medium text-slate-800 truncate">
-                {user.email}
+                {user?.email || (userRole === 'patient' ? 'patient_demo' : 'doctor_demo')}
               </p>
               <p className="text-xs text-slate-500">
-                {user.user_metadata?.full_name || 'Clinic Administrator'}
+                {user?.user_metadata?.full_name || (userRole === 'patient' ? 'Patient Portal User' : 'Clinic Administrator')}
               </p>
             </div>
           )}

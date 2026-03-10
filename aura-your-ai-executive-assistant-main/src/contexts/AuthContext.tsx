@@ -7,7 +7,8 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   isDemoMode: boolean;
-  setDemoMode: (demo: boolean) => void;
+  userRole: 'doctor' | 'patient' | null;
+  setDemoMode: (demo: boolean, role?: 'doctor' | 'patient') => void;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
@@ -20,6 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [userRole, setUserRole] = useState<'doctor' | 'patient' | null>(null);
 
   useEffect(() => {
     // Set up auth state listener FIRST
@@ -68,10 +70,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     await supabase.auth.signOut();
     setIsDemoMode(false);
+    setUserRole(null);
   };
 
-  const setDemoMode = (demo: boolean) => {
+  const setDemoMode = (demo: boolean, role?: 'doctor' | 'patient') => {
     setIsDemoMode(demo);
+    if (role) {
+      setUserRole(role);
+    }
   };
 
   return (
@@ -80,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       session,
       isLoading,
       isDemoMode,
+      userRole,
       setDemoMode,
       signIn,
       signUp,

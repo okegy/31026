@@ -21,7 +21,10 @@ import {
   Brain,
   Loader2,
   Clock,
-  AlertCircle
+  AlertCircle,
+  Zap,
+  Sparkles,
+  UserPlus
 } from 'lucide-react';
 import { demoTasks, demoEvents, demoAgentLogs, getDemoStats } from '@/lib/demoData';
 import { format } from 'date-fns';
@@ -161,28 +164,73 @@ export default function Dashboard() {
                 )}
               </Button>
             </div>
-            <div className="flex flex-wrap gap-2 mt-3">
-              <Badge 
-                variant="outline" 
-                className="cursor-pointer hover:bg-blue-50 border-blue-200 text-slate-600 font-normal"
-                onClick={() => setInput("Schedule a routine checkup for Rahul tomorrow at 2 PM")}
-              >
-                Schedule appointment for Rahul tomorrow
-              </Badge>
-              <Badge 
-                variant="outline" 
-                className="cursor-pointer hover:bg-red-50 border-red-200 text-slate-600 font-normal"
-                onClick={() => setInput("Cancel the 3 PM appointment with Sarah")}
-              >
-                Cancel patient booking
-              </Badge>
-              <Badge 
-                variant="outline" 
-                className="cursor-pointer hover:bg-amber-50 border-amber-200 text-slate-600 font-normal"
-                onClick={() => setInput("Move John's appointment to Friday morning at 10am")}
-              >
-                Move appointment to Friday
-              </Badge>
+            <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4 border-t border-slate-100 pt-5">
+              
+              {/* Complex Clinical Scenarios */}
+              <div>
+                 <div className="flex items-center gap-2 mb-3">
+                   <Zap className="w-4 h-4 text-amber-500" />
+                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Advanced Clinical Actions</span>
+                 </div>
+                 <div className="flex flex-col gap-2">
+                    <button 
+                      onClick={() => setInput("Book an urgent Cardiology consult for Rahul with Dr. Sarah tomorrow at 9:00 AM")}
+                      className="text-left py-2 px-3 rounded-md bg-amber-50/50 hover:bg-amber-50 text-sm text-amber-900 border border-amber-100 transition-colors"
+                    >
+                      <span className="font-semibold block mb-0.5">High-Priority Booking</span>
+                      <span className="text-xs text-amber-700/80">Urgent Cardiology consult • Dr. Sarah</span>
+                    </button>
+                    <button 
+                      onClick={() => setInput("Schedule a routine Pediatric vaccine for little Alice with Dr. Robert next Monday morning")}
+                      className="text-left py-2 px-3 rounded-md bg-blue-50/50 hover:bg-blue-50 text-sm text-blue-900 border border-blue-100 transition-colors"
+                    >
+                      <span className="font-semibold block mb-0.5">Pediatric Routine</span>
+                      <span className="text-xs text-blue-700/80">Vaccine schedule • Dr. Robert</span>
+                    </button>
+                    <button 
+                      onClick={() => setInput("Move John's Neurology appointment to Friday afternoon and notify him via email")}
+                      className="text-left py-2 px-3 rounded-md bg-indigo-50/50 hover:bg-indigo-50 text-sm text-indigo-900 border border-indigo-100 transition-colors"
+                    >
+                      <span className="font-semibold block mb-0.5">Automated Rescheduling</span>
+                      <span className="text-xs text-indigo-700/80">Move Neurology slot • Auto-notify</span>
+                    </button>
+                 </div>
+              </div>
+
+              {/* Data Entities & Context */}
+              <div>
+                 <div className="flex items-center gap-2 mb-3">
+                   <Users className="w-4 h-4 text-emerald-600" />
+                   <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Quick Context Entities</span>
+                 </div>
+                 <div className="flex flex-wrap gap-2 mb-4">
+                    <div className="text-xs font-semibold text-slate-400 w-full mb-1">Doctors:</div>
+                    {['Dr. Sarah (Cardio)', 'Dr. John (Neuro)', 'Dr. Robert (Peds)', 'Dr. Emily (Gen)'].map(doc => (
+                      <Badge 
+                        key={doc}
+                        variant="outline" 
+                        className="cursor-pointer bg-slate-50 hover:bg-emerald-50 border-slate-200 hover:border-emerald-200 text-slate-600 font-normal"
+                        onClick={() => setInput(prev => `${prev} ${doc.split(' ')[0]} ${doc.split(' ')[1]}`)}
+                      >
+                        {doc}
+                      </Badge>
+                    ))}
+                 </div>
+                 <div className="flex flex-wrap gap-2">
+                    <div className="text-xs font-semibold text-slate-400 w-full mb-1">Actions:</div>
+                    {['Cancel appointment', 'Reschedule to', 'Add to waitlist', 'Send confirmation alert'].map(action => (
+                      <Badge 
+                        key={action}
+                        variant="outline" 
+                        className="cursor-pointer bg-slate-50 hover:bg-blue-50 border-slate-200 hover:border-blue-200 text-slate-600 font-normal"
+                        onClick={() => setInput(prev => prev ? `${action.toLowerCase()} ${prev}` : action)}
+                      >
+                        {action}
+                      </Badge>
+                    ))}
+                 </div>
+              </div>
+
             </div>
           </CardContent>
         </Card>

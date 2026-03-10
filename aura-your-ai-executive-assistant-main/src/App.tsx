@@ -13,6 +13,9 @@ import CalendarPage from "./pages/Calendar";
 import Analytics from "./pages/Analytics";
 import Emails from "./pages/Emails";
 import Activity from "./pages/Activity";
+import WaitlistDashboard from "./pages/WaitlistDashboard";
+import PatientDashboard from "./pages/PatientDashboard";
+import DoctorAnalytics from "./pages/DoctorAnalytics";
 import Patients from "./pages/Patients";
 import Doctors from "./pages/Doctors";
 import NotFound from "./pages/NotFound";
@@ -48,9 +51,12 @@ function AppRoutes() {
       <Route path="/patients" element={<ProtectedRoute><Patients /></ProtectedRoute>} />
       <Route path="/doctors" element={<ProtectedRoute><Doctors /></ProtectedRoute>} />
       <Route path="/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
+      <Route path="/patient-dashboard" element={<ProtectedRoute><PatientDashboard /></ProtectedRoute>} />
+      <Route path="/doctor-analytics" element={<ProtectedRoute><DoctorAnalytics /></ProtectedRoute>} />
       <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
       <Route path="/emails" element={<ProtectedRoute><Emails /></ProtectedRoute>} />
       <Route path="/activity" element={<ProtectedRoute><Activity /></ProtectedRoute>} />
+      <Route path="/waitlist" element={<ProtectedRoute><WaitlistDashboard /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

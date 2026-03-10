@@ -223,8 +223,8 @@ export default function Tasks() {
                                   <Button size="sm" variant="outline" className="h-7 text-xs border-green-200 text-green-700 hover:bg-green-50" onClick={() => handleToggleTask(task.id, task.status)}>
                                     Start Consult
                                   </Button>
-                                  <Button size="sm" variant="outline" className="h-7 text-xs border-amber-200 text-amber-700 hover:bg-amber-50">Reschedule</Button>
-                                  <Button size="sm" variant="outline" className="h-7 text-xs border-red-200 text-red-700 hover:bg-red-50">Cancel</Button>
+                                  <Button size="sm" variant="outline" className="h-7 text-xs border-amber-200 text-amber-700 hover:bg-amber-50" onClick={() => toast({title: "Reschedule Request", description: "Reschedule workflow initiated for patient.", variant: "default"})}>Reschedule</Button>
+                                  <Button size="sm" variant="outline" className="h-7 text-xs border-red-200 text-red-700 hover:bg-red-50" onClick={() => toast({title: "Consultation Cancelled", description: "Appointment removed and patient notified.", variant: "destructive"})}>Cancel</Button>
                                 </div>
                             )}
                         </div>
