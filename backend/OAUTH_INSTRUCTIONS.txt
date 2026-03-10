@@ -1,0 +1,22 @@
+
+# MedSchedule AI - OAuth Instructions
+
+## STEP 1: Get Authorization Code
+Open this URL in your browser:
+https://accounts.google.com/o/oauth2/auth?response_type=code&client_id=740499726436-buv6032jdt7vbdcirjieb87okgv99n57.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A8080&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcalendar+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fgmail.send&access_type=offline&include_granted_scopes=true&prompt=consent
+
+## STEP 2: Copy Your Code
+After clicking "Allow", you'll see a URL like:
+http://localhost:8080/?code=4/0AX4XfWh...
+
+Copy the code after ?code= (starts with "4/")
+
+## STEP 3: Enter Your Code
+Edit the file "auth_code.txt" and paste your code there
+Or run: echo "YOUR_CODE_HERE" > auth_code.txt
+
+## STEP 4: Run This Script
+python direct_oauth_fix.py
+
+## STEP 5: Test
+python test_google_auth.py

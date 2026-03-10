@@ -1,0 +1,20 @@
+[
+  {
+    "id": "1",
+    "name": "Dr. Sarah Johnson",
+    "speciality": "General Practice",
+    "email": "sarah.johnson@medschedule.com"
+  },
+  {
+    "id": "2",
+    "name": "Dr. Michael Chen",
+    "speciality": "Cardiology",
+    "email": "michael.chen@medschedule.com"
+  },
+  {
+    "id": "3",
+    "name": "Dr. Emily Davis",
+    "speciality": "Pediatrics",
+    "email": "emily.davis@medschedule.com"
+  }
+]
