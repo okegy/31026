@@ -13,6 +13,8 @@ import CalendarPage from "./pages/Calendar";
 import Analytics from "./pages/Analytics";
 import Emails from "./pages/Emails";
 import Activity from "./pages/Activity";
+import Patients from "./pages/Patients";
+import Doctors from "./pages/Doctors";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +45,8 @@ function AppRoutes() {
       <Route path="/auth/callback" element={<GoogleCallback />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
+      <Route path="/patients" element={<ProtectedRoute><Patients /></ProtectedRoute>} />
+      <Route path="/doctors" element={<ProtectedRoute><Doctors /></ProtectedRoute>} />
       <Route path="/calendar" element={<ProtectedRoute><CalendarPage /></ProtectedRoute>} />
       <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
       <Route path="/emails" element={<ProtectedRoute><Emails /></ProtectedRoute>} />

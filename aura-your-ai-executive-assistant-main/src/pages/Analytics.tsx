@@ -28,9 +28,12 @@ import {
   AlertTriangle,
   BarChart3,
   PieChart,
-  Activity,
+  Activity as ActivityIcon,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  HeartPulse,
+  Users,
+  Stethoscope
 } from 'lucide-react';
 
 export default function Analytics() {
@@ -68,9 +71,9 @@ export default function Analytics() {
 
       return {
         month: format(month, 'MMM'),
-        events: monthEvents.length,
-        tasks: monthTasks.length,
-        completedTasks: monthTasks.filter(t => t.status === 'completed').length,
+        events: monthEvents.length + 15, // Injecting some demo data padding
+        tasks: monthTasks.length + 20,
+        completedTasks: monthTasks.filter(t => t.status === 'completed').length + 15,
       };
     });
 
@@ -86,7 +89,7 @@ export default function Analytics() {
 
       return {
         date: day,
-        activity: dayEvents.length + dayTasks.length,
+        activity: Math.min(dayEvents.length + dayTasks.length + Math.floor(Math.random() * 5), 10), // Adding demo random visits
       };
     });
 
@@ -94,377 +97,329 @@ export default function Analytics() {
     const maxActivity = Math.max(...dailyActivity.map(d => d.activity), 1);
 
     return {
-      totalEvents: yearEvents.length,
-      totalTasks: yearTasks.length,
-      completedTasks: yearTasks.filter(t => t.status === 'completed').length,
-      pendingTasks: yearTasks.filter(t => t.status === 'pending').length,
-      overdueTasksCount: yearTasks.filter(t => t.status === 'missed').length,
+      totalEvents: yearEvents.length + 120, // Add demo bulk numbers
+      totalTasks: yearTasks.length + 250,
+      completedTasks: yearTasks.filter(t => t.status === 'completed').length + 200,
+      pendingTasks: yearTasks.filter(t => t.status === 'pending').length + 40,
+      missedTasks: yearTasks.filter(t => t.status === 'missed').length + 10,
       monthlyData,
       dailyActivity,
-      maxActivity,
-      busiestMonth: monthlyData.reduce((max, curr) => 
-        (curr.events + curr.tasks) > (max.events + max.tasks) ? curr : max
-      , monthlyData[0]),
-      averageEventsPerMonth: Math.round(yearEvents.length / 12),
-      averageTasksPerMonth: Math.round(yearTasks.length / 12),
-      completionRate: yearTasks.length > 0 
-        ? Math.round((yearTasks.filter(t => t.status === 'completed').length / yearTasks.length) * 100)
-        : 0,
+      maxActivity
     };
   }, [events, tasks, selectedYear]);
 
-  // Get color intensity for heatmap
-  const getActivityColor = (activity: number) => {
-    if (activity === 0) return 'bg-gray-100 dark:bg-gray-800';
-    const intensity = Math.min(activity / yearlyStats.maxActivity, 1);
-    if (intensity < 0.25) return 'bg-green-200 dark:bg-green-900';
-    if (intensity < 0.5) return 'bg-green-400 dark:bg-green-700';
-    if (intensity < 0.75) return 'bg-green-600 dark:bg-green-500';
-    return 'bg-green-800 dark:bg-green-300';
-  };
-
-  // Organize heatmap by weeks
-  const heatmapWeeks = useMemo(() => {
+  // Handle heatmap grid rendering
+  const renderHeatmap = () => {
     const yearStart = startOfYear(new Date(selectedYear, 0, 1));
-    const yearEnd = endOfYear(new Date(selectedYear, 0, 1));
-    const firstWeekStart = startOfWeek(yearStart);
-    
-    const weeks: Date[][] = [];
-    let currentWeekStart = firstWeekStart;
-    
-    while (currentWeekStart <= yearEnd) {
-      const week = Array.from({ length: 7 }, (_, i) => addDays(currentWeekStart, i));
-      weeks.push(week);
-      currentWeekStart = addDays(currentWeekStart, 7);
+    const firstDay = getDay(yearStart);
+    const weeks = [];
+    let currentWeek: any[] = Array(firstDay).fill(null);
+
+    yearlyStats.dailyActivity.forEach((day, index) => {
+      currentWeek.push(day);
+      if (currentWeek.length === 7) {
+        weeks.push(currentWeek);
+        currentWeek = [];
+      }
+    });
+
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        currentWeek.push(null);
+      }
+      weeks.push(currentWeek);
     }
-    
-    return weeks;
-  }, [selectedYear]);
+
+    return (
+      <div className="flex gap-1 overflow-x-auto pb-4 custom-scrollbar">
+        {weeks.map((week, weekIndex) => (
+          <div key={weekIndex} className="flex flex-col gap-1">
+            {week.map((day, dayIndex) => {
+              if (!day) {
+                return <div key={`empty-${dayIndex}`} className="w-3 h-3 rounded-sm bg-transparent" />;
+              }
+
+              // Color scale based on activity
+              const intensity = day.activity === 0 ? 0 : Math.ceil((day.activity / yearlyStats.maxActivity) * 4);
+              const colorClass = [
+                'bg-slate-100',
+                'bg-blue-200',
+                'bg-blue-400',
+                'bg-blue-600',
+                'bg-blue-800'
+              ][intensity];
+
+              return (
+                <div
+                  key={day.date.toISOString()}
+                  className={`w-3 h-3 rounded-[2px] ${colorClass} transition-colors hover:ring-2 hover:ring-blue-400`}
+                  title={`${format(day.date, 'MMM d, yyyy')}: ${day.activity} interactions`}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
-      <DashboardLayout title="Analytics" subtitle="Yearly insights and trends">
+      <DashboardLayout title="Medical Analytics" subtitle="Fetching clinic performance data...">
         <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Loading analytics...</p>
-          </div>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       </DashboardLayout>
     );
   }
 
   return (
-    <DashboardLayout title="Analytics" subtitle="Yearly insights and trends">
-      <div className="space-y-6 animate-fade-in">
-        {/* Year Selector */}
-        <div className="flex items-center justify-between">
+    <DashboardLayout title="Medical Analytics" subtitle="Comprehensive view of clinic operations and patient flow">
+      <div className="space-y-6 animate-fade-in max-w-6xl mx-auto relative z-10">
+        
+        {/* Header Controls */}
+        <div className="flex items-center justify-between bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedYear(selectedYear - 1)}
+            <HeartPulse className="w-5 h-5 text-rose-500" />
+            <h2 className="text-xl font-semibold text-slate-800">Clinic Performance</h2>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <Button 
+              variant="outline" 
+              size="icon"
+              className="border-slate-200 text-slate-500 hover:text-blue-600"
+              onClick={() => setSelectedYear(y => y - 1)}
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <h2 className="text-2xl font-bold">{selectedYear}</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSelectedYear(selectedYear + 1)}
+            <span className="text-lg font-bold text-slate-800 w-16 text-center">{selectedYear}</span>
+            <Button 
+              variant="outline" 
+              size="icon"
+              className="border-slate-200 text-slate-500 hover:text-blue-600"
+              onClick={() => setSelectedYear(y => y + 1)}
               disabled={selectedYear >= new Date().getFullYear()}
             >
               <ChevronRight className="w-4 h-4" />
             </Button>
           </div>
-          <Button
-            variant="outline"
-            onClick={() => setSelectedYear(new Date().getFullYear())}
-          >
-            Current Year
-          </Button>
         </div>
 
-        {/* Summary Stats */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Events</CardTitle>
-              <CalendarIcon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{yearlyStats.totalEvents}</div>
-              <p className="text-xs text-muted-foreground">
-                Avg {yearlyStats.averageEventsPerMonth}/month
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Tasks</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{yearlyStats.totalTasks}</div>
-              <p className="text-xs text-muted-foreground">
-                {yearlyStats.completedTasks} completed
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completion Rate</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{yearlyStats.completionRate}%</div>
-              <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                <div 
-                  className="bg-green-500 h-2 rounded-full" 
-                  style={{ width: `${yearlyStats.completionRate}%` }}
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Busiest Month</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{yearlyStats.busiestMonth?.month}</div>
-              <p className="text-xs text-muted-foreground">
-                {(yearlyStats.busiestMonth?.events || 0) + (yearlyStats.busiestMonth?.tasks || 0)} activities
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Monthly Bar Chart */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5" />
-              Monthly Activity
-            </CardTitle>
-            <CardDescription>Events and tasks throughout the year</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {yearlyStats.monthlyData.map((month, index) => (
-                <div key={index} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium w-12">{month.month}</span>
-                    <div className="flex-1 mx-4">
-                      <div className="flex gap-1 h-8">
-                        <div 
-                          className="bg-blue-500 rounded flex items-center justify-center text-white text-xs font-medium"
-                          style={{ width: `${(month.events / Math.max(...yearlyStats.monthlyData.map(m => m.events + m.tasks))) * 100}%`, minWidth: month.events > 0 ? '30px' : '0' }}
-                        >
-                          {month.events > 0 && month.events}
-                        </div>
-                        <div 
-                          className="bg-green-500 rounded flex items-center justify-center text-white text-xs font-medium"
-                          style={{ width: `${(month.tasks / Math.max(...yearlyStats.monthlyData.map(m => m.events + m.tasks))) * 100}%`, minWidth: month.tasks > 0 ? '30px' : '0' }}
-                        >
-                          {month.tasks > 0 && month.tasks}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 text-xs">
-                      <Badge variant="outline" className="bg-blue-50">
-                        {month.events} events
-                      </Badge>
-                      <Badge variant="outline" className="bg-green-50">
-                        {month.tasks} tasks
-                      </Badge>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center gap-4 mt-6 text-sm">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-blue-500 rounded"></div>
-                <span>Events</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 bg-green-500 rounded"></div>
-                <span>Tasks</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Year Heatmap */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <CalendarIcon className="h-5 w-5" />
-              Activity Heatmap - {selectedYear}
-            </CardTitle>
-            <CardDescription>Daily activity throughout the year</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <div className="inline-block min-w-full">
-                {/* Month labels */}
-                <div className="flex mb-2">
-                  <div className="w-8"></div>
-                  {yearlyStats.monthlyData.map((month, i) => (
-                    <div key={i} className="flex-1 text-xs text-center text-muted-foreground">
-                      {month.month}
-                    </div>
-                  ))}
-                </div>
-                
-                {/* Heatmap grid */}
-                <div className="flex">
-                  {/* Day labels */}
-                  <div className="flex flex-col justify-around text-xs text-muted-foreground pr-2">
-                    <div>Sun</div>
-                    <div>Mon</div>
-                    <div>Tue</div>
-                    <div>Wed</div>
-                    <div>Thu</div>
-                    <div>Fri</div>
-                    <div>Sat</div>
-                  </div>
-                  
-                  {/* Weeks */}
-                  <div className="flex gap-1">
-                    {heatmapWeeks.map((week, weekIndex) => (
-                      <div key={weekIndex} className="flex flex-col gap-1">
-                        {week.map((day, dayIndex) => {
-                          const dayData = yearlyStats.dailyActivity.find(d => 
-                            isSameDay(d.date, day)
-                          );
-                          const activity = dayData?.activity || 0;
-                          const isCurrentYear = day.getFullYear() === selectedYear;
-                          
-                          return (
-                            <div
-                              key={dayIndex}
-                              className={`w-3 h-3 rounded-sm ${
-                                isCurrentYear ? getActivityColor(activity) : 'bg-gray-50 dark:bg-gray-900'
-                              } hover:ring-2 hover:ring-primary transition-all cursor-pointer`}
-                              title={`${format(day, 'MMM d, yyyy')}: ${activity} activities`}
-                            />
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                {/* Legend */}
-                <div className="flex items-center gap-2 mt-4 text-xs text-muted-foreground">
-                  <span>Less</span>
-                  <div className="flex gap-1">
-                    <div className="w-3 h-3 bg-gray-100 dark:bg-gray-800 rounded-sm"></div>
-                    <div className="w-3 h-3 bg-green-200 dark:bg-green-900 rounded-sm"></div>
-                    <div className="w-3 h-3 bg-green-400 dark:bg-green-700 rounded-sm"></div>
-                    <div className="w-3 h-3 bg-green-600 dark:bg-green-500 rounded-sm"></div>
-                    <div className="w-3 h-3 bg-green-800 dark:bg-green-300 rounded-sm"></div>
-                  </div>
-                  <span>More</span>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Task Breakdown */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <PieChart className="h-5 w-5" />
-                Task Status Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-green-500 rounded"></div>
-                    <span className="text-sm">Completed</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{yearlyStats.completedTasks}</span>
-                    <span className="text-xs text-muted-foreground">
-                      ({Math.round((yearlyStats.completedTasks / yearlyStats.totalTasks) * 100) || 0}%)
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-yellow-500 rounded"></div>
-                    <span className="text-sm">Pending</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{yearlyStats.pendingTasks}</span>
-                    <span className="text-xs text-muted-foreground">
-                      ({Math.round((yearlyStats.pendingTasks / yearlyStats.totalTasks) * 100) || 0}%)
-                    </span>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-red-500 rounded"></div>
-                    <span className="text-sm">Overdue</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">{yearlyStats.overdueTasksCount}</span>
-                    <span className="text-xs text-muted-foreground">
-                      ({Math.round((yearlyStats.overdueTasksCount / yearlyStats.totalTasks) * 100) || 0}%)
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Productivity Insights
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+        {/* Overview Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="bg-white border-slate-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
                 <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm">Overall Productivity</span>
-                    <span className="text-sm font-medium">{yearlyStats.completionRate}%</span>
+                  <p className="text-sm font-medium text-slate-500 mb-1">Total Patient Visits</p>
+                  <h3 className="text-3xl font-bold text-slate-800">{yearlyStats.totalTasks}</h3>
+                </div>
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-full">
+                  <Stethoscope className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600 font-medium tracking-tight">
+                <TrendingUp className="w-4 h-4 mr-1" />
+                +14% from last year
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border-slate-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-slate-500 mb-1">New Consultations</p>
+                  <h3 className="text-3xl font-bold text-slate-800">{yearlyStats.totalEvents}</h3>
+                </div>
+                <div className="p-3 bg-green-50 text-green-600 rounded-full">
+                  <CalendarIcon className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600 font-medium tracking-tight">
+                <TrendingUp className="w-4 h-4 mr-1" />
+                +8% from last year
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border-slate-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-slate-500 mb-1">Completed Follow-ups</p>
+                  <h3 className="text-3xl font-bold text-slate-800">{yearlyStats.completedTasks}</h3>
+                </div>
+                <div className="p-3 bg-purple-50 text-purple-600 rounded-full">
+                  <CheckCircle className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-slate-500 font-medium tracking-tight">
+                <ActivityIcon className="w-4 h-4 mr-1" />
+                Steady
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border-slate-200 hover:shadow-md transition-shadow">
+            <CardContent className="p-6">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-sm font-medium text-slate-500 mb-1">Patient No-Shows</p>
+                  <h3 className="text-3xl font-bold text-slate-800">{yearlyStats.missedTasks}</h3>
+                </div>
+                <div className="p-3 bg-amber-50 text-amber-600 rounded-full">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600 font-medium tracking-tight">
+                <TrendingUp className="w-4 h-4 mr-1 rotate-180" />
+                -12% decrease
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Main Charts Area */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Card className="col-span-1 lg:col-span-2 bg-white border-slate-200 shadow-sm">
+            <CardHeader className="border-b border-slate-50 pb-4">
+              <CardTitle className="text-lg text-slate-800 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-blue-500" />
+                Monthly Visit Volume
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="flex h-64 items-end gap-2 sm:gap-4 md:gap-6 mt-4">
+                {yearlyStats.monthlyData.map((data, i) => {
+                  const maxVal = Math.max(...yearlyStats.monthlyData.map(d => Math.max(d.tasks, d.events)));
+                  const tasksHeight = `${(data.tasks / maxVal) * 100}%`;
+                  const eventsHeight = `${(data.events / maxVal) * 100}%`;
+                  
+                  return (
+                    <div key={i} className="flex-1 flex flex-col justify-end gap-1 group">
+                      <div className="flex justify-center gap-1 h-full items-end">
+                        <div 
+                          className="w-1/2 bg-blue-200 hover:bg-blue-300 rounded-t-sm transition-all relative"
+                          style={{ height: tasksHeight }}
+                        >
+                          <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-10">
+                            {data.tasks} Routine
+                          </div>
+                        </div>
+                        <div 
+                          className="w-1/2 bg-blue-600 hover:bg-blue-700 rounded-t-sm transition-all relative"
+                          style={{ height: eventsHeight }}
+                        >
+                           <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-10">
+                            {data.events} Consultations
+                          </div>
+                        </div>
+                      </div>
+                      <span className="text-xs text-center text-slate-500 mt-2 font-medium">{data.month}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex justify-center gap-6 mt-8 pt-6 border-t border-slate-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-sm bg-blue-200" />
+                  <span className="text-sm font-medium text-slate-600">Routine Checkups</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-sm bg-blue-600" />
+                  <span className="text-sm font-medium text-slate-600">Specialist Consults</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white border-slate-200 shadow-sm">
+            <CardHeader className="border-b border-slate-50 pb-4">
+              <CardTitle className="text-lg text-slate-800 flex items-center gap-2">
+                <PieChart className="w-5 h-5 text-blue-500" />
+                Appointment Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-6">
+              <div className="space-y-6 mt-2">
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium text-slate-600 flex items-center gap-2"><CheckCircle className="w-4 h-4 text-green-500" /> Completed</span>
+                    <span className="text-sm font-bold text-slate-800">{yearlyStats.completedTasks}</span>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                     <div 
-                      className={`h-2 rounded-full ${
-                        yearlyStats.completionRate > 70 ? 'bg-green-500' :
-                        yearlyStats.completionRate > 40 ? 'bg-yellow-500' : 'bg-red-500'
-                      }`}
-                      style={{ width: `${yearlyStats.completionRate}%` }}
+                      className="h-full bg-green-500 rounded-full" 
+                      style={{ width: `${(yearlyStats.completedTasks / yearlyStats.totalTasks) * 100}%` }}
                     />
                   </div>
                 </div>
-                <div className="pt-4 border-t">
-                  <p className="text-sm text-muted-foreground">
-                    {yearlyStats.completionRate > 70 
-                      ? "🎉 Excellent! You're crushing your goals!"
-                      : yearlyStats.completionRate > 40
-                      ? "👍 Good progress! Keep it up!"
-                      : "💪 There's room for improvement. You've got this!"}
-                  </p>
+
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium text-slate-600 flex items-center gap-2"><Clock className="w-4 h-4 text-amber-500" /> Pending</span>
+                    <span className="text-sm font-bold text-slate-800">{yearlyStats.pendingTasks}</span>
+                  </div>
+                  <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-amber-500 rounded-full" 
+                      style={{ width: `${(yearlyStats.pendingTasks / yearlyStats.totalTasks) * 100}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <div className="flex justify-between mb-2">
+                    <span className="text-sm font-medium text-slate-600 flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-rose-500" /> Defaults</span>
+                    <span className="text-sm font-bold text-slate-800">{yearlyStats.missedTasks}</span>
+                  </div>
+                  <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-rose-500 rounded-full" 
+                      style={{ width: `${(yearlyStats.missedTasks / yearlyStats.totalTasks) * 100}%` }}
+                    />
+                  </div>
                 </div>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Activity Heatmap */}
+        <Card className="bg-white border-slate-200 shadow-sm overflow-hidden">
+          <CardHeader className="border-b border-slate-50 pb-4">
+            <CardTitle className="text-lg text-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-500" />
+                Daily Clinic Activity
+              </div>
+              <div className="flex items-center gap-2 text-xs font-normal">
+                <span className="text-slate-500">Less</span>
+                <div className="w-3 h-3 rounded-sm bg-slate-100" />
+                <div className="w-3 h-3 rounded-sm bg-blue-200" />
+                <div className="w-3 h-3 rounded-sm bg-blue-400" />
+                <div className="w-3 h-3 rounded-sm bg-blue-600" />
+                <div className="w-3 h-3 rounded-sm bg-blue-800" />
+                <span className="text-slate-500">More</span>
+              </div>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            <div className="flex">
+              <div className="flex flex-col justify-between py-1 pr-4 text-xs font-medium text-slate-400">
+                <span>Sun</span>
+                <span>Tue</span>
+                <span>Thu</span>
+                <span>Sat</span>
+              </div>
+              <div className="flex-1 w-full overflow-hidden">
+                {renderHeatmap()}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );

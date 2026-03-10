@@ -18,7 +18,7 @@ export async function requestNotificationPermission(): Promise<boolean> {
 
 export function showTaskReminder(taskTitle: string, deadline: string) {
   if (Notification.permission === 'granted') {
-    const notification = new Notification('Task Reminder - AURA', {
+    const notification = new Notification('Task Reminder - MEDICU AI', {
       body: `Reminder: ${taskTitle}\nDeadline: ${new Date(deadline).toLocaleString()}`,
       icon: '/favicon.ico',
       badge: '/favicon.ico',

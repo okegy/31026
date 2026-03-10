@@ -90,7 +90,21 @@ export function useEvents() {
     location?: string;
   }) => {
     if (isDemoMode) {
-      throw new Error('Cannot create events in demo mode. Please sign in to save events.');
+      const newEvent: Event = {
+        id: `demo-event-${Date.now()}`,
+        user_id: 'demo-user',
+        title: eventData.title,
+        description: eventData.description || null,
+        start_time: eventData.start_time,
+        end_time: eventData.end_time,
+        attendees: eventData.attendees || null,
+        location: eventData.location || null,
+        is_demo: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      setEvents(prev => [...prev, newEvent]);
+      return { data: newEvent, error: null };
     }
 
     if (!user) {
@@ -129,7 +143,13 @@ export function useEvents() {
     updates: Partial<Omit<Event, 'id' | 'user_id' | 'created_at' | 'updated_at'>>
   ) => {
     if (isDemoMode) {
-      throw new Error('Cannot update events in demo mode');
+      setEvents(prev => prev.map(event =>
+        event.id === eventId
+          ? { ...event, ...updates, updated_at: new Date().toISOString() }
+          : event
+      ));
+      const updatedEvent = events.find(e => e.id === eventId);
+      return { data: updatedEvent || null, error: null };
     }
 
     if (!user) {
@@ -155,7 +175,8 @@ export function useEvents() {
 
   const deleteEvent = async (eventId: string) => {
     if (isDemoMode) {
-      throw new Error('Cannot delete events in demo mode');
+      setEvents(prev => prev.filter(event => event.id !== eventId));
+      return { error: null };
     }
 
     if (!user) {

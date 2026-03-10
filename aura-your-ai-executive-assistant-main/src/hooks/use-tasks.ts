@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { demoTasks } from '@/lib/demoData';
 
 export interface Task {
   id: string;
@@ -27,7 +28,13 @@ export function useTasks() {
 
   useEffect(() => {
     if (isDemoMode) {
-      setTasks([]);
+      // Preload demo tasks so the UI has data
+      setTasks(demoTasks.map(t => ({
+        ...t,
+        user_id: 'demo-user',
+        is_demo: true,
+        updated_at: t.created_at,
+      })) as Task[]);
       setIsLoading(false);
       return;
     }

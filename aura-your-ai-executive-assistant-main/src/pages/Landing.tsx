@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { WavyBackground } from '@/components/ui/wavy-background';
 import { 
-  Sparkles, 
+  Heart, 
   Calendar, 
   Mail, 
   Brain, 
-  Zap, 
+  Stethoscope, 
   Shield, 
   TrendingUp,
   ArrowRight,
@@ -16,272 +17,193 @@ import {
   Clock,
   Users,
   Target,
-  Workflow
+  Workflow,
+  Activity
 } from 'lucide-react';
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [isHovering, setIsHovering] = useState(false);
 
   const features = [
     {
       icon: Brain,
-      title: 'Multi-Agent AI Architecture',
-      description: 'Specialized AI agents work together to understand, plan, and execute tasks autonomously',
-      color: 'from-purple-500 to-pink-500',
+      title: 'AI Medical Assistant',
+      description: 'Advanced healthcare AI designed to manage clinic workflows and appointment scheduling autonomously',
+      color: 'from-blue-500 to-indigo-500',
     },
     {
       icon: Shield,
-      title: 'Privacy-First Offline LLM',
-      description: 'Zero-cost AI processing with open-source models. Your data never leaves your control',
-      color: 'from-blue-500 to-cyan-500',
-    },
-    {
-      icon: Mail,
-      title: 'Proactive Email Follow-Ups',
-      description: 'Automatically sends reminders and status updates via Gmail integration',
+      title: 'HIPAA-Ready Architecture',
+      description: 'Privacy-first processing ensures patient data remains secure and strictly within your control',
       color: 'from-green-500 to-emerald-500',
     },
     {
-      icon: Target,
-      title: 'Intelligent Prioritization',
-      description: 'AI analyzes urgency and importance to prioritize your tasks automatically',
-      color: 'from-orange-500 to-red-500',
+      icon: Mail,
+      title: 'Automated Patient Follow-Ups',
+      description: 'Automatically sends appointment confirmations and health reminders to patients',
+      color: 'from-purple-500 to-indigo-500',
+    },
+    {
+      icon: Activity,
+      title: 'Real-time Clinic Analytics',
+      description: 'Monitor doctor availability, daily patient flow, and clinic efficiency live',
+      color: 'from-blue-400 to-cyan-500',
     },
   ];
 
   const workflow = [
-    { step: 'Natural Language Input', icon: Users, description: 'Speak naturally' },
-    { step: 'NLP Intent Recognition', icon: Brain, description: 'AI understands context' },
-    { step: 'Multi-Agent Planning', icon: Workflow, description: 'Agents coordinate' },
-    { step: 'Smart Execution', icon: Zap, description: 'Actions automated' },
-    { step: 'Proactive Follow-Up', icon: Mail, description: 'Never forget again' },
+    { step: 'Patient Request', icon: Users, description: 'Natural language input' },
+    { step: 'AI Assessment', icon: Brain, description: 'Understands urgency' },
+    { step: 'Doctor Matching', icon: Stethoscope, description: 'Finds availability' },
+    { step: 'Auto-Scheduling', icon: Calendar, description: 'Booking confirmed' },
+    { step: 'Patient Care', icon: Heart, description: 'Follow-ups sent' },
   ];
 
   const winningPoints = [
-    'Autonomous, not reactive - AURA acts before you ask',
-    'Zero-cost AI with offline open-source LLM',
-    'Real-world integrations: Gmail + Google Calendar',
-    'Production-ready scalable architecture',
-    'Privacy-first: Your data stays with you',
+    'Autonomous healthcare scheduling - MEDICU acts before you ask',
+    'Human-centered, calm, and trustworthy medical design',
+    'Seamless integrations: Google Calendar & Gmail notifications',
+    'Production-ready scalable clinic architecture',
+    'Reduces doctor burnout and clinic administrative overhead',
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-purple-950 to-slate-950 text-white overflow-hidden">
-      {/* Animated Background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
-        <div className="absolute top-1/2 left-1/2 w-96 h-96 bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-500"></div>
-      </div>
+    <div className="min-h-screen bg-white text-slate-800 overflow-hidden font-sans">
+      
+      {/* Hero Section with Wavy Background */}
+      <WavyBackground className="max-w-7xl mx-auto px-6 py-24 pb-40" backgroundFill="#f8fafc" colors={['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE']}>
+        <div className="text-center animate-fade-in relative z-10 pt-16">
+          <Badge className="mb-6 px-6 py-2 text-sm font-medium bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200 uppercase tracking-widest shadow-sm">
+            <Stethoscope className="w-4 h-4 mr-2 inline" />
+            AI Clinic Administrator
+          </Badge>
+          
+          <h1 className="text-6xl md:text-8xl font-bold mb-6 text-slate-900 tracking-tight">
+            MEDICU
+          </h1>
+          
+          <p className="text-2xl md:text-3xl font-medium mb-6 text-blue-600">
+            Intelligent Medical Scheduling & Clinic Assistant
+          </p>
+          
+          <p className="text-xl text-slate-600 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+            An autonomous AI assistant that <span className="text-blue-600 font-medium">schedules patients, manages doctors, and follows up</span> for you.
+            <br />
+            MEDICU reduces administrative overhead gracefully.
+          </p>
 
-      <div className="relative z-10">
-        {/* Hero Section */}
-        <section className="container mx-auto px-6 py-20 text-center">
-          <div className="animate-fade-in">
-            <Badge className="mb-6 px-6 py-2 text-sm font-semibold bg-gradient-to-r from-purple-500/20 to-pink-500/20 border-purple-500/30">
-              <Sparkles className="w-4 h-4 mr-2 inline" />
-              Autonomous AI Agent
-            </Badge>
-            
-            <h1 className="text-7xl md:text-8xl font-bold mb-6 bg-gradient-to-r from-white via-purple-200 to-pink-200 bg-clip-text text-transparent">
-              AURA
-            </h1>
-            
-            <p className="text-3xl md:text-4xl font-semibold mb-4 text-purple-200">
-              Autonomous Unified Reminder Agent
-            </p>
-            
-            <p className="text-xl md:text-2xl text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
-              An autonomous AI agent that <span className="text-purple-400 font-semibold">plans, schedules, and follows up</span> for you.
-              <br />
-              AURA reduces cognitive overload by managing tasks across calendar and email autonomously.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <Button
-                size="lg"
-                className="h-14 px-8 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/50 transition-all hover:scale-105"
-                onClick={() => navigate('/dashboard')}
-                onMouseEnter={() => setIsHovering(true)}
-                onMouseLeave={() => setIsHovering(false)}
-              >
-                <Sparkles className={`w-5 h-5 mr-2 ${isHovering ? 'animate-spin' : ''}`} />
-                Try AURA Now
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              
-              <Button
-                size="lg"
-                variant="outline"
-                className="h-14 px-8 text-lg font-semibold border-2 border-purple-500/50 hover:bg-purple-500/10"
-                onClick={() => document.getElementById('demo')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                See How It Works
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-center gap-8 text-gray-400">
-              <div className="flex items-center gap-2">
-                <Brain className="w-5 h-5 text-purple-400" />
-                <span>AI-Powered</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-blue-400" />
-                <span>Google Calendar</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail className="w-5 h-5 text-green-400" />
-                <span>Gmail Integration</span>
-              </div>
-            </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button 
+              size="lg" 
+              className="w-full sm:w-auto text-lg px-8 py-6 bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all shadow-blue-500/30"
+              onClick={() => navigate('/auth')}
+            >
+              Experience MEDICU
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="w-full sm:w-auto text-lg px-8 py-6 border-blue-200 text-blue-700 hover:bg-blue-50 bg-white shadow-sm"
+              onClick={() => {
+                const featuresEl = document.getElementById('features');
+                featuresEl?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              How it works
+            </Button>
           </div>
-        </section>
+        </div>
+      </WavyBackground>
 
-        {/* Demo Section */}
-        <section id="demo" className="container mx-auto px-6 py-20">
-          <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl font-bold text-center mb-4">
-              Experience Autonomous Task Management
-            </h2>
-            <p className="text-xl text-gray-400 text-center mb-12">
-              Just tell AURA what you need. It handles the rest.
+      <div className="relative z-10 bg-white">
+        {/* Features Grid */}
+        <section id="features" className="container mx-auto px-6 py-24 bg-slate-50 border-y border-slate-100">
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-4xl font-bold mb-4 text-slate-900">Next-Generation Healthcare Management</h2>
+            <p className="text-xl text-slate-500 max-w-2xl mx-auto font-light">
+              Built to handle the complexities of modern medical practices
             </p>
-
-            <Card className="bg-gradient-to-br from-slate-900/90 to-purple-900/30 backdrop-blur-xl border-purple-500/30 shadow-2xl">
-              <CardContent className="p-8">
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <p className="text-gray-400 mb-4">Try saying:</p>
-                    <div className="space-y-2">
-                      <Badge variant="outline" className="text-sm px-4 py-2 border-purple-500/50">
-                        "Remind me to submit my assignment tomorrow at 6 pm and email me if I forget"
-                      </Badge>
-                      <br />
-                      <Badge variant="outline" className="text-sm px-4 py-2 border-blue-500/50">
-                        "Schedule a meeting with John next Monday at 2pm"
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <Button
-                    size="lg"
-                    className="w-full h-16 text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                    onClick={() => navigate('/dashboard')}
-                  >
-                    <Zap className="w-5 h-5 mr-2" />
-                    Let AURA Handle It
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
           </div>
-        </section>
-
-        {/* Features Section */}
-        <section className="container mx-auto px-6 py-20">
-          <h2 className="text-4xl font-bold text-center mb-16">
-            Multi-Agent AI Architecture
-          </h2>
-
-          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
-            {features.map((feature, index) => (
-              <Card
-                key={index}
-                className="group bg-gradient-to-br from-slate-900/50 to-purple-900/20 backdrop-blur-xl border-purple-500/20 hover:border-purple-500/50 transition-all hover:scale-105 cursor-pointer"
-              >
-                <CardContent className="p-6">
-                  <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                    <feature.icon className="w-6 h-6 text-white" />
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((feature, idx) => (
+              <Card key={idx} className="bg-white border-slate-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1">
+                <CardContent className="p-8">
+                  <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-6 shadow-sm`}>
+                    <feature.icon className="w-7 h-7 text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-400">{feature.description}</p>
+                  <h3 className="text-xl font-semibold mb-3 text-slate-800">{feature.title}</h3>
+                  <p className="text-slate-500 leading-relaxed text-sm">
+                    {feature.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
           </div>
         </section>
 
-        {/* Workflow Section */}
-        <section className="container mx-auto px-6 py-20">
-          <h2 className="text-4xl font-bold text-center mb-4">
-            How AURA Works
-          </h2>
-          <p className="text-xl text-gray-400 text-center mb-16">
-            Five-step autonomous workflow
-          </p>
+        {/* AI Workflow */}
+        <section className="container mx-auto px-6 py-24">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4 text-slate-900">How MEDICU works</h2>
+            <p className="text-xl text-slate-500 font-light">Seamless autonomous workflow from request to resolution</p>
+          </div>
 
-          <div className="max-w-4xl mx-auto">
-            <div className="space-y-4">
-              {workflow.map((item, index) => (
-                <div key={index} className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center font-bold text-lg">
-                    {index + 1}
+          <div className="relative max-w-5xl mx-auto">
+            <div className="absolute top-1/2 left-0 w-full h-1 bg-gradient-to-r from-blue-100 via-blue-300 to-blue-100 -translate-y-1/2 hidden md:block rounded-full"></div>
+            <div className="grid md:grid-cols-5 gap-8 relative z-10">
+              {workflow.map((item, idx) => (
+                <div key={idx} className="flex flex-col items-center text-center">
+                  <div className="w-20 h-20 rounded-full bg-white border-4 border-blue-100 shadow-lg flex items-center justify-center mb-6 relative group hover:border-blue-400 transition-colors">
+                     <div className="absolute inset-0 rounded-full bg-blue-50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <item.icon className="w-8 h-8 text-blue-600 relative z-10" />
+                    <div className="absolute -top-3 -right-3 w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm border-2 border-white">
+                      {idx + 1}
+                    </div>
                   </div>
-                  <Card className="flex-1 bg-gradient-to-r from-slate-900/50 to-purple-900/20 backdrop-blur-xl border-purple-500/20 hover:border-purple-500/50 transition-all">
-                    <CardContent className="p-4 flex items-center gap-4">
-                      <item.icon className="w-6 h-6 text-purple-400" />
-                      <div className="flex-1">
-                        <h4 className="font-semibold">{item.step}</h4>
-                        <p className="text-sm text-gray-400">{item.description}</p>
-                      </div>
-                      <ArrowRight className="w-5 h-5 text-gray-600" />
-                    </CardContent>
-                  </Card>
+                  <h3 className="font-semibold text-lg text-slate-800 mb-2">{item.step}</h3>
+                  <p className="text-sm text-slate-500 font-light">{item.description}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* Why AURA Wins */}
-        <section className="container mx-auto px-6 py-20">
-          <h2 className="text-4xl font-bold text-center mb-4">
-            Why AURA Wins
-          </h2>
-          <p className="text-xl text-gray-400 text-center mb-16">
-            Built for judges, designed for users
-          </p>
-
-          <div className="max-w-3xl mx-auto">
-            <Card className="bg-gradient-to-br from-slate-900/90 to-purple-900/30 backdrop-blur-xl border-purple-500/30">
-              <CardContent className="p-8">
-                <div className="space-y-4">
-                  {winningPoints.map((point, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                      <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
-                      <p className="text-lg">{point}</p>
-                    </div>
-                  ))}
+        {/* Value Proposition */}
+        <section className="bg-slate-900 text-white py-24">
+          <div className="container mx-auto px-6 max-w-4xl text-center">
+            <Heart className="w-16 h-16 text-rose-500 mx-auto mb-8" />
+            <h2 className="text-4xl md:text-5xl font-bold mb-12">
+              Why hospitals choose MEDICU
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-6 text-left">
+              {winningPoints.map((point, idx) => (
+                <div key={idx} className="flex items-start gap-4 p-6 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors backdrop-blur-sm">
+                  <CheckCircle className="w-6 h-6 text-green-400 flex-shrink-0 mt-1" />
+                  <p className="text-lg text-slate-200 font-light leading-relaxed">{point}</p>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
           </div>
         </section>
 
-        {/* CTA Footer */}
-        <section className="container mx-auto px-6 py-20 text-center">
-          <h2 className="text-5xl font-bold mb-6">
-            Stop managing tasks.
-            <br />
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-              Let AURA manage them for you.
-            </span>
+        {/* CTA Section */}
+        <section className="container mx-auto px-6 py-32 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-8 text-slate-900">
+            Ready to upgrade your clinic?
           </h2>
-          
-          <Button
-            size="lg"
-            className="h-16 px-12 text-xl font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg shadow-purple-500/50 transition-all hover:scale-105"
-            onClick={() => navigate('/dashboard')}
+          <p className="text-xl text-slate-500 mb-10 max-w-2xl mx-auto font-light">
+            Join the future of healthcare administration with our autonomous medical assistant.
+          </p>
+          <Button 
+            size="lg" 
+            className="text-lg px-10 py-8 bg-blue-600 hover:bg-blue-700 text-white shadow-xl hover:shadow-blue-500/20 transition-all rounded-xl"
+            onClick={() => navigate('/auth')}
           >
-            <Sparkles className="w-6 h-6 mr-2" />
-            Experience AURA
+            Deploy MEDICU Today
+            <ArrowRight className="w-6 h-6 ml-2" />
           </Button>
-
-          <div className="mt-16 text-gray-500 text-sm">
-            <p>Powered by Multi-Agent AI Architecture</p>
-            <p className="mt-2">AURA - Autonomous Unified Reminder Agent</p>
-          </div>
         </section>
       </div>
     </div>

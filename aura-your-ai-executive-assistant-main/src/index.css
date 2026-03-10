@@ -1,126 +1,126 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
-
 @layer base {
   :root {
-    /* AURA Color System - Modern AI Assistant */
-    --background: 220 20% 97%;
-    --foreground: 220 30% 15%;
-
+    /* MEDICU Color System - Medical AI Assistant */
+    --background: 210 40% 98%; /* Soft white #F8FAFC equivalent */
+    --foreground: 222 47% 11%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 220 30% 15%;
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 30% 15%;
+    --popover-foreground: 222 47% 11%;
 
-    /* Primary - Deep Indigo (AI accent) */
-    --primary: 245 58% 51%;
-    --primary-foreground: 0 0% 100%;
+    /* Primary - Medical Blue #2563EB */
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
 
-    /* Secondary - Soft lavender */
-    --secondary: 245 30% 95%;
-    --secondary-foreground: 245 58% 40%;
+    /* Secondary - Healing Green #22C55E */
+    --secondary: 142 71% 45%;
+    --secondary-foreground: 210 40% 98%;
 
     /* Muted */
-    --muted: 220 20% 94%;
-    --muted-foreground: 220 15% 50%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
-    /* Accent - Electric purple glow */
-    --accent: 270 70% 60%;
-    --accent-foreground: 0 0% 100%;
+    /* Accent - Calm purple #8B5CF6 */
+    --accent: 258 90% 66%;
+    --accent-foreground: 210 40% 98%;
 
-    /* Success - Emerald */
-    --success: 160 84% 39%;
+    /* Success - Healing Green */
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
-    /* Warning - Amber */
+    /* Warning - Soft amber #F59E0B */
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
 
-    /* Destructive */
+    /* Destructive - Medical red #EF4444 */
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
     /* Borders */
-    --border: 220 20% 90%;
-    --input: 220 20% 90%;
-    --ring: 245 58% 51%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221 83% 53%;
 
     --radius: 0.75rem;
 
     /* Sidebar */
     --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 220 30% 30%;
-    --sidebar-primary: 245 58% 51%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 221 83% 53%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 245 30% 95%;
-    --sidebar-accent-foreground: 245 58% 40%;
-    --sidebar-border: 220 20% 92%;
-    --sidebar-ring: 245 58% 51%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 221 83% 53%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 221 83% 53%;
 
     /* Priority colors */
     --priority-high: 0 84% 60%;
     --priority-medium: 38 92% 50%;
-    --priority-low: 160 84% 39%;
+    --priority-low: 142 71% 45%;
 
     /* AI glow effect */
-    --ai-glow: 245 80% 65%;
+    --ai-glow: 221 83% 60%;
 
     /* Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(245, 58%, 51%) 0%, hsl(270, 70%, 60%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(245, 30%, 98%) 100%);
+    --gradient-primary: linear-gradient(135deg, hsl(221, 83%, 53%) 0%, hsl(258, 90%, 66%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0, 0%, 100%) 0%, hsl(210, 40%, 98%) 100%);
   }
 
   .dark {
-    --background: 220 25% 8%;
-    --foreground: 220 20% 95%;
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-    --card: 220 25% 12%;
-    --card-foreground: 220 20% 95%;
+    --card: 222 47% 11%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 220 25% 12%;
-    --popover-foreground: 220 20% 95%;
+    --popover: 222 47% 11%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 245 70% 65%;
-    --primary-foreground: 220 25% 8%;
+    --primary: 221 83% 53%;
+    --primary-foreground: 210 40% 98%;
 
-    --secondary: 245 30% 20%;
-    --secondary-foreground: 245 70% 80%;
+    --secondary: 142 71% 45%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 220 25% 18%;
-    --muted-foreground: 220 15% 60%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 270 70% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 258 90% 66%;
+    --accent-foreground: 210 40% 98%;
 
-    --success: 160 84% 45%;
+    --success: 142 71% 45%;
     --success-foreground: 0 0% 100%;
 
-    --warning: 38 92% 55%;
+    --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
 
-    --destructive: 0 70% 50%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 25% 18%;
-    --input: 220 25% 18%;
-    --ring: 245 70% 65%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 221 83% 53%;
 
-    --sidebar-background: 220 25% 10%;
-    --sidebar-foreground: 220 20% 85%;
-    --sidebar-primary: 245 70% 65%;
-    --sidebar-primary-foreground: 220 25% 8%;
-    --sidebar-accent: 245 30% 20%;
-    --sidebar-accent-foreground: 245 70% 80%;
-    --sidebar-border: 220 25% 15%;
-    --sidebar-ring: 245 70% 65%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 210 40% 98%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 221 83% 53%;
 
-    --ai-glow: 245 80% 70%;
-    --gradient-primary: linear-gradient(135deg, hsl(245, 70%, 65%) 0%, hsl(270, 70%, 55%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(220, 25%, 12%) 0%, hsl(220, 30%, 10%) 100%);
+    --ai-glow: 221 83% 60%;
+    --gradient-primary: linear-gradient(135deg, hsl(221, 83%, 53%) 0%, hsl(258, 90%, 66%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(222, 47%, 11%) 0%, hsl(222, 47%, 9%) 100%);
   }
 }
 
@@ -135,7 +135,8 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: -0.02em;
   }
 }
 

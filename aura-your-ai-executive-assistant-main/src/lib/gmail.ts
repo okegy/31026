@@ -76,7 +76,7 @@ export async function sendTaskConfirmationEmail(
 ): Promise<EmailStatus> {
   const message: EmailMessage = {
     to: userEmail,
-    subject: `✓ AURA Task Created: ${taskTitle}`,
+    subject: `✓ MEDICU AI Task Created: ${taskTitle}`,
     html: true,
     body: `
       <!DOCTYPE html>
@@ -99,7 +99,7 @@ export async function sendTaskConfirmationEmail(
         <div class="container">
           <div class="header">
             <h1 style="margin: 0; font-size: 28px;">✓ Task Confirmed</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">AURA has scheduled your task</p>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">MEDICU AI has scheduled your task</p>
           </div>
           <div class="content">
             <div class="task-card">
@@ -115,14 +115,14 @@ export async function sendTaskConfirmationEmail(
               <strong>What's next?</strong><br>
               • Calendar event has been created<br>
               • You'll receive reminders before the deadline<br>
-              • AURA will follow up if the task is incomplete
+              • MEDICU AI will follow up if the task is incomplete
             </p>
             <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">
-              This is an automated message from your AURA AI Assistant.
+              This is an automated message from your MEDICU AI Assistant.
             </p>
           </div>
           <div class="footer">
-            <p>Powered by AURA - Autonomous Unified Reminder Agent</p>
+            <p>Powered by MEDICU AI - Medical Scheduling Assistant</p>
           </div>
         </div>
       </body>
@@ -141,7 +141,7 @@ export async function sendTaskReminderEmail(
 ): Promise<EmailStatus> {
   const message: EmailMessage = {
     to: userEmail,
-    subject: `⏰ AURA Reminder: ${taskTitle}`,
+    subject: `⏰ MEDICU AI Reminder: ${taskTitle}`,
     html: true,
     body: `
       <!DOCTYPE html>
@@ -173,7 +173,7 @@ export async function sendTaskReminderEmail(
               </p>
             </div>
             <p style="color: #374151;">
-              <strong>AURA recommends:</strong><br>
+              <strong>MEDICU AI recommends:</strong><br>
               • Set aside time now to complete this task<br>
               • Break it into smaller steps if needed<br>
               • Mark as complete when done
@@ -198,7 +198,7 @@ export async function sendEventConfirmationEmail(
 ): Promise<EmailStatus> {
   const message: EmailMessage = {
     to: userEmail,
-    subject: `📅 AURA Event Created: ${eventTitle}`,
+    subject: `📅 MEDICU AI Event Created: ${eventTitle}`,
     html: true,
     body: `
       <!DOCTYPE html>
@@ -216,7 +216,7 @@ export async function sendEventConfirmationEmail(
         <div class="container">
           <div class="header">
             <h1 style="margin: 0; font-size: 28px;">📅 Event Scheduled</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">AURA has added this to your calendar</p>
+            <p style="margin: 10px 0 0 0; opacity: 0.9;">MEDICU AI has added this to your calendar</p>
           </div>
           <div class="content">
             <div class="event-card">
@@ -232,7 +232,7 @@ export async function sendEventConfirmationEmail(
               <strong>What's next?</strong><br>
               • Check your Google Calendar for details<br>
               • You'll receive reminders before the event<br>
-              • AURA will help you prepare
+              • MEDICU AI will help you prepare
             </p>
           </div>
         </div>

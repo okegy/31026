@@ -1,14 +1,15 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import { 
-  LayoutDashboard, 
-  CheckSquare, 
-  Calendar, 
-  Mail, 
   Activity, 
+  CalendarCheck, 
+  Heart,
+  Stethoscope,
+  Calendar, 
+  MessageSquare,
+  Activity as ActivityLogIcon,
   LogOut,
   Sparkles,
-  Settings,
   BarChart3
 } from 'lucide-react';
 import {
@@ -28,12 +29,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Badge } from '@/components/ui/badge';
 
 const mainNavItems = [
-  { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
-  { title: 'Tasks', icon: CheckSquare, path: '/tasks' },
+  { title: 'Dashboard', icon: Activity, path: '/dashboard' },
+  { title: 'Appointments', icon: CalendarCheck, path: '/tasks' },
+  { title: 'Patients', icon: Heart, path: '/patients' },
+  { title: 'Doctors', icon: Stethoscope, path: '/doctors' },
   { title: 'Calendar', icon: Calendar, path: '/calendar' },
   { title: 'Analytics', icon: BarChart3, path: '/analytics' },
-  { title: 'Emails', icon: Mail, path: '/emails' },
-  { title: 'Agent Activity', icon: Activity, path: '/activity' },
+  { title: 'Messages', icon: MessageSquare, path: '/emails' },
+  { title: 'Activity Log', icon: ActivityLogIcon, path: '/activity' },
 ];
 
 export function AppSidebar() {
@@ -41,50 +44,45 @@ export function AppSidebar() {
   const { signOut, isDemoMode, user } = useAuth();
 
   return (
-    <Sidebar className="border-r border-sidebar-border">
-      <SidebarHeader className="p-4 border-b border-sidebar-border">
+    <Sidebar className="border-r border-slate-200 bg-slate-50">
+      <SidebarHeader className="p-4 border-b border-slate-200">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center ai-glow">
-            <Sparkles className="w-5 h-5 text-primary" />
+          <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center shadow-inner pt-0.5">
+            <Stethoscope className="w-6 h-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="font-display font-bold text-lg gradient-text">AURA</h1>
-            <p className="text-xs text-muted-foreground">AI Assistant</p>
+            <h1 className="font-display font-bold text-xl text-blue-900 tracking-tight">MEDICU</h1>
+            <p className="text-xs font-medium text-slate-500 uppercase tracking-widest">Clinic Assistant</p>
           </div>
         </div>
-        {isDemoMode && (
-          <Badge variant="secondary" className="mt-3 w-full justify-center">
-            <Sparkles className="w-3 h-3 mr-1" />
-            Demo Mode
-          </Badge>
-        )}
       </SidebarHeader>
 
       <SidebarContent className="px-2 py-4">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-medium text-muted-foreground px-3 mb-2">
-            Main Menu
+          <SidebarGroupLabel className="text-xs font-semibold text-slate-400 uppercase tracking-wider px-3 mb-2">
+            Clinic Management
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNavItems.map((item) => {
-                const isActive = location.pathname === item.path;
+                // Determine active state - basic matching or specific map
+                const isActive = location.pathname === item.path || (location.pathname === '/' && item.path === '/dashboard');
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
                       isActive={isActive}
                       className={`
-                        transition-all duration-200
+                        transition-all duration-200 mb-1 rounded-lg
                         ${isActive 
-                          ? 'bg-primary/10 text-primary border-l-2 border-primary' 
-                          : 'hover:bg-sidebar-accent text-sidebar-foreground'
+                          ? 'bg-blue-600/10 text-blue-700 font-semibold' 
+                          : 'hover:bg-slate-100 text-slate-600 hover:text-slate-900'
                         }
                       `}
                     >
-                      <NavLink to={item.path} className="flex items-center gap-3 px-3 py-2">
-                        <item.icon className={`w-4 h-4 ${isActive ? 'text-primary' : ''}`} />
-                        <span className="font-medium">{item.title}</span>
+                      <NavLink to={item.path} className="flex items-center gap-3 px-3 py-2.5">
+                        <item.icon className={`w-4.5 h-4.5 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                        <span>{item.title}</span>
                       </NavLink>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -95,25 +93,25 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-sidebar-border">
+      <SidebarFooter className="p-4 border-t border-slate-200">
         <div className="space-y-3">
           {user && (
-            <div className="px-3 py-2 rounded-lg bg-sidebar-accent">
-              <p className="text-sm font-medium text-sidebar-foreground truncate">
+            <div className="px-3 py-2 rounded-lg bg-white border border-slate-100 shadow-sm">
+              <p className="text-sm font-medium text-slate-800 truncate">
                 {user.email}
               </p>
-              <p className="text-xs text-muted-foreground">
-                {user.user_metadata?.full_name || 'User'}
+              <p className="text-xs text-slate-500">
+                {user.user_metadata?.full_name || 'Clinic Administrator'}
               </p>
             </div>
           )}
           <Button
             variant="ghost"
-            className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-sidebar-accent"
+            className="w-full justify-start text-slate-500 hover:text-red-600 hover:bg-red-50 transition-colors"
             onClick={signOut}
           >
             <LogOut className="w-4 h-4 mr-2" />
-            {isDemoMode ? 'Exit Demo' : 'Sign Out'}
+            {isDemoMode ? 'Log Out' : 'Sign Out'}
           </Button>
         </div>
       </SidebarFooter>

@@ -32,12 +32,6 @@ export function DashboardLayout({ children, title, subtitle }: DashboardLayoutPr
                   <p className="text-sm text-muted-foreground">{subtitle}</p>
                 )}
               </div>
-              {isDemoMode && (
-                <Badge variant="outline" className="border-primary/30 text-primary">
-                  <Sparkles className="w-3 h-3 mr-1" />
-                  Demo Mode
-                </Badge>
-              )}
             </div>
           </header>
           <main className="flex-1 p-6 overflow-auto bg-background">

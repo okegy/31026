@@ -72,7 +72,7 @@ export default function Auth() {
     } else {
       toast({
         title: 'Welcome back! 👋',
-        description: 'AURA is ready to assist you.',
+        description: 'MEDICU AI is ready to assist you.',
       });
     }
   };
@@ -96,7 +96,7 @@ export default function Auth() {
     } else {
       toast({
         title: 'Account created! 🎉',
-        description: 'Welcome to AURA. Let\'s get started!',
+        description: 'Welcome to MEDICU AI. Let\'s get started!',
       });
     }
   };
@@ -105,7 +105,7 @@ export default function Auth() {
     setDemoMode(true);
     toast({
       title: 'Demo Mode Activated ✨',
-      description: 'Explore AURA with sample data. No account needed!',
+      description: 'Explore MEDICU AI with sample data. No account needed!',
     });
   };
 
@@ -119,12 +119,12 @@ export default function Auth() {
 
       <Card className="w-full max-w-md relative z-10 border-border/50 shadow-xl">
         <CardHeader className="text-center pb-2">
-          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center ai-glow">
-            <Sparkles className="w-8 h-8 text-primary" />
+          <div className="mx-auto mb-4 w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center shadow-inner pt-0.5">
+            <Sparkles className="w-8 h-8 text-blue-600" />
           </div>
-          <CardTitle className="text-3xl font-display gradient-text">AURA</CardTitle>
+          <CardTitle className="text-3xl font-display font-bold text-blue-900 tracking-tight">MEDICU AI</CardTitle>
           <CardDescription className="text-muted-foreground">
-            Autonomous Unified Reminder & Action Agent
+            Next-Generation Medical Assistant
           </CardDescription>
         </CardHeader>
         
@@ -274,7 +274,7 @@ export default function Auth() {
           </Button>
           
           <p className="text-center text-xs text-muted-foreground">
-            Demo mode lets you explore AURA with sample data
+            Demo mode lets you explore MEDICU AI with sample data
           </p>
         </CardContent>
       </Card>
